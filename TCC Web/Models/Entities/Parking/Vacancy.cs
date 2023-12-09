@@ -6,12 +6,6 @@ namespace TCC_Web.Models.Entities.Parking
 {
     public class Vacancy : BaseEntity<Guid>
     {
-        public Vacancy()
-        {
-            ParkingReservation = new HashSet<ParkingReservation>();
-            ParkingReservationHistory = new HashSet<ParkingReservationHistory>();
-        }
-
         public Guid ParkingId { get; set; }
         [Required]
         [StringLength(255)]
@@ -22,9 +16,5 @@ namespace TCC_Web.Models.Entities.Parking
         [ForeignKey("ParkingId")]
         [InverseProperty("Vacancy")]
         public virtual Parking Parking { get; set; }
-        [InverseProperty("Vacancy")]
-        public virtual ICollection<ParkingReservation> ParkingReservation { get; set; }
-        [InverseProperty("Vacancy")]
-        public virtual ICollection<ParkingReservationHistory> ParkingReservationHistory { get; set; }
     }
 }

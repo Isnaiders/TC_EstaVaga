@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TCC_Web.Models.DTOs.Parking;
-using TCC_Web.Models.Entities.User;
 using TCC_Web.Services;
 
 namespace TCC_Web.Controllers
@@ -140,35 +139,6 @@ namespace TCC_Web.Controllers
 			string message = await _apiService.DeleteApi(apiUrl);
 
 			return RedirectToAction("Index");
-		}
-
-		public IActionResult CarAdd()
-		{
-			var model = new Car();
-
-			return View(model);
-		}
-
-		[HttpPost]
-		public IActionResult CarAdd(Car model)
-		{
-			return View(model);
-		}
-
-		public IActionResult CarUpdate()
-		{
-			var model = new Car();
-			model.Name = "Carro Passeio";
-			model.Model = "Porsche Taycan";
-			model.Plate = "1234-ABC";
-
-			return View(model);
-		}
-
-		[HttpPost]
-		public IActionResult CarUpdate(Car model)
-		{
-			return View(model);
 		}
 	}
 }

@@ -9,9 +9,6 @@ namespace TCC_Web.Models.Entities.Parking
     {
         public Parking() : base()
         {
-            ParkingOpeningHour = new HashSet<ParkingOpeningHour>();
-            ParkingReservation = new HashSet<ParkingReservation>();
-            ParkingReservationHistory = new HashSet<ParkingReservationHistory>();
             Vacancy = new HashSet<Vacancy>();
             Id = Guid.NewGuid();
             CountryId = Guid.NewGuid();
@@ -58,12 +55,6 @@ namespace TCC_Web.Models.Entities.Parking
         public ParkingLocationType LocationType { get; set; }
 
 
-        [InverseProperty("Parking")]
-        public virtual ICollection<ParkingOpeningHour> ParkingOpeningHour { get; set; }
-        [InverseProperty("Parking")]
-        public virtual ICollection<ParkingReservation> ParkingReservation { get; set; }
-        [InverseProperty("Parking")]
-        public virtual ICollection<ParkingReservationHistory> ParkingReservationHistory { get; set; }
         [InverseProperty("Parking")]
         public virtual ICollection<Vacancy> Vacancy { get; set; }
     }
