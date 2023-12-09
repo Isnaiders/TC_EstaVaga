@@ -1,0 +1,100 @@
+﻿@using TCC_Web.Models.DTOs.Parking;
+@{
+	ViewData["Title"] = "Visualizar os Estacionamentos";
+}
+
+@model List<ParkingDetailedDTO>
+
+<div class="row">
+	<div class="col-md-12">
+		<table id="parkingTable"
+			   data-toggle="table"
+			   data-pagination="true"
+			   data-search="true"
+			   data-show-columns="true"
+			   data-show-columns-toggle-all="true"
+			   data-show-fullscreen="true"
+			   data-icons-prefix="icon"
+			   data-icons="icons"
+			   data-buttons="buttons">
+			<thead>
+				<tr>
+					<th data-field="Name" data-sortable="true">Nome</th>
+					<th data-field="Address" data-sortable="true">Endereço</th>
+					<th data-field="AddressComplement" data-sortable="true">Complemento do Endereço</th>
+					<th data-field="Actions" data-align="center">Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var parking in Model)
+				{
+					<tr>
+						<td>
+							<div><a href="@Url.Action("View", new { id = parking.Id})">@parking.Name</a></div>
+							<div><small>@parking.Id</small></div>
+						</td>
+						<td>@string.Format("{0}, {1}", parking.Address, parking.AddressNumber)</td>
+						<td>@parking.AddressComplement</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle"
+										type="button"
+										data-bs-toggle="dropdown"
+										aria-expanded="false">
+									Ações
+								</button>
+								<ul class="dropdown-menu">
+									<li><button class="dropdown-item" type="button" onclick="redirectToUpdate('@parking.Id')">Editar</button></li>
+									<li><button class="dropdown-item" type="button" onclick="redirectToRemove('@parking.Id')">Remover</button></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			if ('@TempData["ErrorMessage"]' != undefined && '@TempData["ErrorMessage"]' != '' && '@TempData["ErrorMessage"]' != null) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: '@TempData["ErrorMessage"]',
+				});
+			}
+		});
+
+		window.icons = {
+			refresh: 'fa-solid fa-rotate-right',
+			columns: 'fa-solid fa-bars',
+			fullscreen: 'fa-solid fa-expand'
+		}
+
+		function buttons() {
+			return {
+				btnParkingAdd: {
+					text: 'Adicionar estacionamento',
+					icon: 'fa-solid fa-plus',
+					event: function () {
+						location.href = '@Url.Action("Add")';
+					},
+					attributes: {
+						title: 'Adicionar um novo estacionamento'
+					}
+				}
+			}
+		}
+
+		function redirectToUpdate(id) {
+			location.href = '@Url.Action("Update")/' + id;
+		}
+
+		function redirectToRemove(id) {
+			location.href = '@Url.Action("Remove")/' + id;
+		}
+	</script>
+}

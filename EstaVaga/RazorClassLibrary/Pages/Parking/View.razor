@@ -1,0 +1,191 @@
+﻿@page "/Parking/View/{parkingId}"
+
+@using RazorClassLibrary.Models.Base;
+@using RazorClassLibrary.Models.DTOs.Parking;
+@using RazorClassLibrary.Models.Enums.Base;
+
+@inject ApiService _apiService
+@inject NavigationManager nav
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Visualização do Estacionamento</PageTitle>
+
+<div class="row mb-3 text-center">
+	<div class="col-lg-12">
+		@if (parking.SystemStatus == SystemStatusType.Active)
+		{
+			<h3>Visão do Estacionamento</h3>
+		}
+		else
+		{
+			<h3>Estacionamento Solicitado</h3>
+		}
+		<button @onclick="RealTimeLoading">Recaregar por 30 segundos</button>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-4 mb-3">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Nome:</label>
+					@parking.Name
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>CEP:</label>
+					@parking.PostalCode
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Pais:</label>
+					@parking.CountryName
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Estado:</label>
+					@parking.StateName
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Cidade:</label>
+					@parking.CityName
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Bairro:</label>
+					@parking.NeighborhoodName
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Endereço:</label>
+					@($"{parking.Address}, {parking.AddressNumber}")
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<label>Complemento:</label>
+					@parking.AddressComplement
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="form-group">
+					<label>Tipo do estacionamento:</label>
+					@parking.LocationType.ToString()
+				</div>
+			</div>
+		</div>
+	</div>
+	@if (parking.SystemStatus == SystemStatusType.Active)
+	{
+		<div class="col-md-8 align-content-center">
+			
+			<svg width="550" height="550">
+				<!-- Coluna de frente 1 -->
+				<g transform="translate(100, 0)">
+					@foreach (var vacancy in leftVcancies)
+					{
+						<rect x="-30" y="@leftCount" width="100" height="50" fill="@(vacancy.Busy ? "red" : "green")" stroke="black" stroke-width="2" transform="rotate(35, 50, @(leftCount - 50))" />
+						leftCount += 100;
+					}
+					
+				</g>
+				<!-- Coluna de costas 1 -->
+				<g transform="translate(400, 0)">
+					@foreach (var vacancy in rightVcancies)
+					{
+						<rect x="-30" y="@rightCount" width="100" height="50" fill="@(vacancy.Busy ? "red" : "green" )" stroke="black" stroke-width="2" transform="rotate(35, 50, @rightCount)" />
+						rightCount += 100;
+					}
+					
+				</g>
+				<!-- Rua -->
+				<rect x="200" y="0" width="100" height="550" fill="gray" />
+			</svg>
+		</div>
+	}
+</div>
+@if (message != null)
+{
+	<div class="alert alert-secondary" role="alert">
+		@message
+	</div>
+}
+
+@code {
+	ParkingDetailedDTO parking = new ParkingDetailedDTO();
+	string message;
+	[Parameter] public string parkingId { get; set; }
+	int leftCount = 75;
+	int rightCount = 75;
+	List<VacancyBasicDTO> leftVcancies = new List<VacancyBasicDTO>();
+	List<VacancyBasicDTO> rightVcancies = new List<VacancyBasicDTO>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetParkingById();
+		ResetVariables();
+	}
+
+	private async Task GetParkingById()
+	{
+		try
+		{
+			var apiData = await _apiService.GetApiData("Parking/GetById/" + parkingId);
+			// Desserializar os dados da API em um objeto
+			parking = JsonConvert.DeserializeObject<ParkingDetailedDTO>(apiData);
+			var halfVacancy = parking.Vacancies.Count() / 2;
+			leftVcancies = parking.Vacancies.OrderBy(e => e.Id).Take(halfVacancy).ToList();
+			rightVcancies = parking.Vacancies.OrderBy(e => e.Id).Skip(halfVacancy).ToList();
+			ResetVariables();
+		}
+		catch (Exception)
+		{
+			message = "Erro de conexão com a API";
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task RealTimeLoading()
+	{
+		var count = 0;
+		ResetVariables();
+		while (count <= 2)
+		{
+			count++;
+			await GetParkingById();
+			Thread.Sleep(5000);
+		}
+		ResetVariables();
+
+	}
+
+	private void ResetVariables()
+	{
+		leftCount = 75;
+		rightCount = 75;
+	}
+}

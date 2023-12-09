@@ -1,0 +1,108 @@
+﻿@page "/Registration"
+
+@using RazorClassLibrary.Models.DTOs.User;
+
+@layout ModelLayout
+@inject ApiService _apiService
+@inject NavigationManager nav
+@inject IJSRuntime JSRuntime
+
+<button type="button" @onclick="() => nav.NavigateTo(navLogon)">Voltar</button>
+
+<PageTitle>Registration</PageTitle>
+
+<div class="wrapper fadeInDown">
+	<div id="formContent">
+		<h1 class="tittle-page">Registre-se</h1>
+		<EditForm Model="model" OnValidSubmit="Validate">
+			<DataAnnotationsValidator />
+			<div class="form-group">
+				<label for="name">Nome:</label>
+				@*<input type="text" id="Name" class="fadeIn second" name="Name" required @bind-value="model.Name">*@
+				<input type="text" id="name" class="fadeIn second" name="name" @bind-value="model.Name">
+				<ValidationMessage For="@(() => model.Name)"></ValidationMessage>
+			</div>
+
+			<div class="form-group">
+				<label for="password">Senha:</label>
+				@*<input type="password" id="password" class="fadeIn third" name="password" required @bind-value="model.Password">*@
+				<input type="password" id="password" class="fadeIn third" name="password" @bind-value="model.Password">
+				<ValidationMessage For="@(() => model.Password)"></ValidationMessage>
+			</div>
+
+			<div class="form-group">
+				<label for="email">E-mail:</label>
+				@*<input type="email" id="email" class="fadeIn second" name="email" required @bind-value="model.Email">*@
+				<input type="email" id="email" class="fadeIn second" name="email" @bind-value="model.Email">
+				<ValidationMessage For="@(() => model.Email)"></ValidationMessage>
+			</div>
+
+			<div class="form-group">
+				<svg width="8" height="8" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16"> <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" /> </svg>
+				<label for="birthDate">Data:</label>
+				<input type="date" id="birthDate" class="fadeIn second" name="birthDate" @bind-value="model.BirthDate">
+				<ValidationMessage For="@(() => model.BirthDate)"></ValidationMessage>
+
+			</div>
+			@*<input style="width:100%" type="submit" class="fadeIn fourth registration" @onclick="Submit" value="Registrar">Registrar</input>*@
+			<div class="spinner" style="display: @(isLoading ? "block" : "none")">
+				<div class="spinner-border text-primary" role="status"></div>
+				<span class="sr-only">Carregando...</span>
+			</div>
+			<button type="submit" class="btn btn-dark" @onclick="Submit">Registrar</button>
+		</EditForm>
+
+		@if (results.Any())
+			{
+				<div class="alert alert-secondary" role="alert">
+					@foreach (var result in results)
+					{
+						<div class="row mb-2">
+							<div class="col-md-12">
+								@string.Format("{0}: {1}", result.Field, result.ValidationMessage)
+							</div>
+						</div>
+					}
+				</div>
+			}
+	</div>
+</div>
+
+@code {
+	UserDetailedDTO model = new UserDetailedDTO();
+	List<ResultModel> results = new List<ResultModel>();
+	string navLogon = "/";
+	bool isLoading = false;
+
+	private async void Submit()
+	{
+		var modelJson = JsonConvert.SerializeObject(model);
+		results = await _apiService.PostApiData("User/Add", modelJson);
+
+		if (results.Any(e => e.IsSuccessStatusCode))
+		{
+			nav.NavigateTo(navLogon);
+		}
+
+		StateHasChanged();
+	}
+
+	private void Validate()
+	{
+		LazyLoad(true);
+		var validationContext = new ValidationContext(model);
+		var validationResults = new List<ValidationResult>();
+
+		if (Validator.TryValidateObject(model, validationContext, validationResults, validateAllProperties: true))
+			Submit();
+		LazyLoad(false);
+	}
+
+	private async Task LazyLoad(bool isDisabled)
+    {
+        // Chame a função JavaScript registrada
+        await JSRuntime.InvokeVoidAsync("lazyLoading", isDisabled);
+        isLoading = isDisabled;
+        StateHasChanged();
+    }
+}

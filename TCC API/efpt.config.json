@@ -1,0 +1,69 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "TC_EstaVagaContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models\/Entities",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "TCC_API",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "Name": "[dbo].[Authentication]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Car]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Parking]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingOpeningHour]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingReservation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingReservationHistory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[User]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Vacancy]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "desktop-li2l19t\\sqlexpress.TC_EstaVaga.dbo",
+   "UncountableWords": null,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false,
+   "UseT4": false
+}

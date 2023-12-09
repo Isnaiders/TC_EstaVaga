@@ -1,0 +1,104 @@
+﻿@page "/"
+
+@using RazorClassLibrary.Models.DTOs.Login;
+
+@layout ModelLayout
+@inject ApiService _apiService
+@inject NavigationManager nav
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Logon</PageTitle>
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <!-- Icon -->
+        <div class="fadeIn first">
+            <img src="_content/RazorClassLibrary/img/user.png" id="icon" alt="User Icon">
+        </div>
+		<EditForm Model="model" OnValidSubmit="Validate">
+			<DataAnnotationsValidator />
+            <!-- Login Form -->
+            <input type="text" id="login" class="fadeIn second" name="login" @bind-value="model.UserIdentifier" placeholder="Login" />
+			<ValidationMessage For="@(() => model.UserIdentifier)"></ValidationMessage>
+			<input type="password" id="password" class="fadeIn third" name="password" @bind-value="model.Password" placeholder="Senha" />
+			<ValidationMessage For="@(() => model.Password)"></ValidationMessage>
+			<div class="row">
+                <div class="col-md-12 pull-rigth">
+					<div class="spinner" style="display: @(isLoading ? "block" : "none")">
+						<div class="spinner-border text-primary" role="status"></div>
+						<span class="sr-only">Carregando...</span>
+					</div>
+
+                    <button type="submit" class="btn btn-dark" value="Log In" @onclick="Submit">Login</button>
+                    <button type="buttom" class="btn btn-dark" value="Registrar" @onclick="NavigateToRegistration">Registrar</button>
+                </div>
+            </div>
+        </EditForm>
+
+		@if (results.Any())
+		{
+			<div class="alert alert-secondary" role="alert">
+				@foreach (var result in results)
+				{
+					<div class="row mb-2">
+						<div class="col-md-12">
+							@string.Format("{0}: {1}", result.Field, result.ValidationMessage)
+						</div>
+					</div>
+				}
+			</div>
+		}
+    </div>
+</div>
+
+@code {
+	LoginDTO model = new LoginDTO();
+	List<ResultModel> results = new List<ResultModel>();
+	bool isLoading = false;
+
+	private async void Submit()
+	{
+		var modelJson = JsonConvert.SerializeObject(model);
+		results = await _apiService.PostApiData("User/Login", modelJson);
+
+		if (results.Any(e => e.IsSuccessStatusCode))
+		{
+			//navega para o Index
+			var apiData = await _apiService.GetApiData("User/GetIdByUserIdentity/" + model.UserIdentifier);
+
+			// Remova as aspas da string
+			string userIdString = JsonConvert.DeserializeObject<string>(apiData);
+
+			_apiService.UserId = Guid.Parse(userIdString);
+			_apiService.UserIdentifier = model.UserIdentifier;
+			nav.NavigateTo("/Index");
+		}
+
+		StateHasChanged();
+	}
+
+	private void Validate()
+	{
+		LazyLoad(true);
+		var validationContext = new ValidationContext(model);
+		var validationResults = new List<ValidationResult>();
+
+		if (Validator.TryValidateObject(model, validationContext, validationResults, validateAllProperties: true))
+			Submit();
+		LazyLoad(false);
+	}
+
+	private async Task LazyLoad(bool isDisabled)
+	{
+		// Chame a função JavaScript registrada
+		await JSRuntime.InvokeVoidAsync("lazyLoading", isDisabled);
+		isLoading = isDisabled;
+		StateHasChanged();
+	}
+
+	private void NavigateToRegistration()
+	{
+		nav.NavigateTo("/Registration");
+	}
+}

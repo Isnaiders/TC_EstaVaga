@@ -1,0 +1,88 @@
+﻿@using TCC_Web.Models.Base;
+@using TCC_Web.Models.DTOs.User;
+@{
+    ViewData["Title"] = "Cadastrar Usuário";
+}
+
+@model UserSessionDTO
+
+@{
+    var pageShortTitle = "Cadastrar Usuário";
+    var pageFullTitle = string.Format("{0}: {1}", "Usuário", pageShortTitle);
+
+    ViewBag.Title = pageFullTitle;
+}
+
+<div class="wrapper wrapper-content animated fadeInUp">
+    <form method="post">
+        <div class="ibox">
+            <a class="collapse-link">
+                <div class="ibox-title">
+                    <h5>Cadastrar Usuário</h5>
+                    <div class="ibox-tools">
+                        <div type="button" class="btn btn-default btn-circle btn-outline btn-xs"><i class="fa fa-chevron-up"></i></div>
+                    </div>
+                </div>
+            </a>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Nome *</label>
+                            @Html.TextBoxFor(m => m.User.Name, new { Class = "form-control", Placeholder = "Nome" })
+                            @Html.ValidationMessageFor(m => m.User.Name, "", new { Class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            @Html.TextBoxFor(m => m.User.Email, new { Class = "form-control", Placeholder = "Email" })
+                            @Html.ValidationMessageFor(m => m.User.Email, "", new { Class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Data de Nascimento *</label>
+                            @Html.TextBoxFor(m => m.User.BirthDate, new { Class = "form-control", Placeholder = "Data de Nascimento", type = "date" })
+                            @Html.ValidationMessageFor(m => m.User.BirthDate, "", new { Class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Senha *</label>
+                            @Html.TextBoxFor(m => m.User.Password, new { Class = "form-control", Placeholder = "Senha", type = "password" })
+                            @Html.ValidationMessageFor(m => m.User.Password, "", new { Class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ibox" style="margin-top: 10px">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="pull-right">
+                        <button class="btn btn-sm btn-primary m-t-n-xs" type="submit" id="saveButton"><strong>Salvar</strong></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            if ('@TempData["ErrorMessage"]' != undefined && '@TempData["ErrorMessage"]' != '' && '@TempData["ErrorMessage"]' != null) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: '@TempData["ErrorMessage"]',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok',
+                    html: '@TempData["ErrorMessage"]'
+                });
+            }
+        });
+    </script>
+}

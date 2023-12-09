@@ -1,0 +1,68 @@
+﻿@inject ApiService _apiService
+@inject NavigationManager nav
+
+<div class="top-row ps-3 navbar navbar-dark">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="">EstaVaga</a>
+		<button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+	</div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+	<nav class="flex-column">
+		<div class="nav-item">
+			<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				<span class="oi oi-home" aria-hidden="true" style="font-size:small;"></span> Home
+			</NavLink>
+		</div>
+		<div class="nav-item">
+			<NavLink class="nav-link" href="Parking/Index">
+				<span class="oi oi-list" aria-hidden="true" style="font-size:small"></span> Estacionamentos
+			</NavLink>
+		</div>
+		<div class="nav-item">
+			<NavLink class="nav-link" href="Parking/Add">
+				<span class="oi oi-plus" aria-hidden="true" style="font-size:small;"></span> Solicitar Novo Estacionamento
+			</NavLink>
+		</div>
+		<div class="nav-item">
+			<NavLink class="nav-link" @onclick="Logout">
+				<span class="oi oi-person" aria-hidden="true" style="font-size:small;"></span> Logout
+			</NavLink>
+		</div>
+	</nav>
+</div>
+
+@code {
+	private bool collapseNavMenu = true;
+	private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+	private void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
+
+	string message;
+	private async void Logout()
+	{
+		message = "";
+		try
+		{
+			var resultData = await _apiService.DeleteApi("User/Logout/" + _apiService.UserId.ToString());
+
+			resultData = resultData.Trim('"');
+
+			if (resultData == "Logout feito com sucesso!")
+			{
+				nav.NavigateTo("/");
+			}
+			message = resultData;
+		}
+		catch (Exception)
+		{
+			message = "Erro";
+		}
+	}
+}

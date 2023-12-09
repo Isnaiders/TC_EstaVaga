@@ -1,0 +1,111 @@
+﻿@using TCC_Web.Models.Base;
+@using TCC_Web.Models.DTOs.Parking;
+
+@{
+	ViewData["Title"] = "Atualizar Estacionamento";
+}
+
+@model ParkingDetailedDTO
+
+@{
+	var pageShortTitle = "Atualizar Estacionamento";
+	var pageFullTitle = string.Format("{0}: {1}", "Estacionamento", pageShortTitle);
+
+	ViewBag.Title = pageFullTitle;
+}
+
+<div class="wrapper wrapper-content animated fadeInUp">
+	<form method="post">
+		<div class="ibox">
+			<a class="collapse-link">
+				<div class="ibox-title">
+					<h5>Atualizar Estacionamento</h5>
+					<div class="ibox-tools">
+						<div type="button" class="btn btn-default btn-circle btn-outline btn-xs"><i class="fa fa-chevron-up"></i></div>
+					</div>
+				</div>
+			</a>
+			<div class="ibox-content">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Nome do Estacionamento *</label>
+							@Html.TextBoxFor(m => m.Name, new { Class = "form-control", Placeholder = "Nome do Estacionamento" })
+							@Html.ValidationMessageFor(m => m.Name, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Localização do Estacionamento *</label>
+							@Html.DropDownListFor(m => m.LocationType, DropDownListModel.DataEnumerate(Model.LocationType, Model.LocationType.ToString()), new { Class = "form-control" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Código Postal *</label>
+							@Html.TextBoxFor(m => m.PostalCode, new { Class = "form-control", Placeholder = "Código Postal" })
+							@Html.ValidationMessageFor(m => m.PostalCode, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>País *</label>
+							@Html.TextBoxFor(m => m.CountryName, new { Class = "form-control", Placeholder = "País" })
+							@Html.ValidationMessageFor(m => m.CountryName, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Estado *</label>
+							@Html.TextBoxFor(m => m.StateName, new { Class = "form-control", Placeholder = "Estado" })
+							@Html.ValidationMessageFor(m => m.StateName, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Cidade *</label>
+							@Html.TextBoxFor(m => m.CityName, new { Class = "form-control", Placeholder = "Cidade" })
+							@Html.ValidationMessageFor(m => m.CityName, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label>Bairro *</label>
+							@Html.TextBoxFor(m => m.NeighborhoodName, new { Class = "form-control", Placeholder = "Bairro" })
+							@Html.ValidationMessageFor(m => m.NeighborhoodName, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="form-group">
+							<label>Endereço *</label>
+							@Html.TextBoxFor(m => m.Address, new { Class = "form-control", Placeholder = "Endereço" })
+							@Html.ValidationMessageFor(m => m.Address, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group">
+							<label>Número *</label>
+							@Html.TextBoxFor(m => m.AddressNumber, new { Class = "form-control", Placeholder = "Número" })
+							@Html.ValidationMessageFor(m => m.AddressNumber, "", new { Class = "text-danger" })
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Complemento *</label>
+							@Html.TextBoxFor(m => m.AddressComplement, new { Class = "form-control", Placeholder = "Complemento" })
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ibox" style="margin-top: 10px">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="pull-right">
+						<button class="btn btn-sm btn-primary m-t-n-xs" type="submit" id="saveButton"><strong>Salvar</strong></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,166 @@
+﻿@page "/Parking/Add"
+
+@using RazorClassLibrary.Models.Base;
+@using RazorClassLibrary.Models.DTOs.Parking;
+
+@inject ApiService _apiService
+@inject NavigationManager nav
+@inject IJSRuntime JSRuntime;
+
+<PageTitle>Solicitar Novo Estacionamento</PageTitle>
+
+<div class="wrapper fadeInDown">
+    <div class="row mb-3 text-center">
+        <div class="col-lg-12">
+            <h3>Solicitar Novo Estacionamento</h3>
+        </div>
+    </div>
+    <EditForm Model="model" OnValidSubmit="Validate">
+        <DataAnnotationsValidator />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Nome do Estacionamento *</label>
+                    <input class="form-control" placeholder="Nome do Estacionamento" @bind="model.Name" />
+                    @*<span class="text-danger">@Model.Name</span>*@
+                    <ValidationMessage For="@(() => model.Name)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Localização do Estacionamento *</label>
+                    <select class="form-control" @bind="model.LocationType">
+                        @foreach (var item in DropDownListModel.DataEnumerate(model.LocationType, ""))
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    </select>
+                    <ValidationMessage For="@(() => model.LocationType)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Código Postal *</label>
+                    <input type="number" class="form-control" placeholder="Código Postal" @bind="model.PostalCode" />
+                    @*<span class="text-danger">@Model.PostalCode</span>*@
+                    <ValidationMessage For="@(() => model.PostalCode)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>País *</label>
+                    <input class="form-control" placeholder="País" @bind="model.CountryName" />
+                    @*<span class="text-danger">@Model.CountryName</span>*@
+                    <ValidationMessage For="@(() => model.CountryName)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Estado *</label>
+                    <input class="form-control" placeholder="Estado" @bind="model.StateName" />
+                    @*<span class="text-danger">@Model.StateName</span>*@
+                    <ValidationMessage For="@(() => model.StateName)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Cidade *</label>
+                    <input class="form-control" placeholder="Cidade" @bind="model.CityName" />
+                    @*<span class="text-danger">@Model.CityName</span>*@
+                    <ValidationMessage For="@(() => model.CityName)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Bairro *</label>
+                    <input class="form-control" placeholder="Bairro" @bind="model.NeighborhoodName" />
+                    @*<span class="text-danger">@Model.NeighborhoodName</span>*@
+                    <ValidationMessage For="@(() => model.NeighborhoodName)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Endereço *</label>
+                    <input class="form-control" placeholder="Endereço" @bind="model.Address" />
+                    @*<span class="text-danger">@Model.Address</span>*@
+                    <ValidationMessage For="@(() => model.Address)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Número *</label>
+                    <input type="number" class="form-control" placeholder="Número" @bind="model.AddressNumber" />
+                    @*<span class="text-danger">@model.AddressNumber</span>*@
+                    <ValidationMessage For="@(() => model.AddressNumber)"></ValidationMessage>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Complemento *</label>
+                    <input class="form-control" placeholder="Complemento" @bind="model.AddressComplement" />
+                    <ValidationMessage For="@(() => model.AddressComplement)"></ValidationMessage>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="spinner" style="display: @(isLoading ? "block" : "none")">
+                <div class="spinner-border text-primary" role="status"></div>
+                <span class="sr-only">Carregando...</span>
+            </div>
+            <input type="submit" class="fadeIn fourth" value="Solicitar" @onclick="Submit" />
+        </div>
+    </EditForm>
+
+    @if (results.Any())
+    {
+        <div class="alert alert-secondary" role="alert">
+            @foreach (var result in results)
+            {
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        @string.Format("{0}: {1}", result.Field, result.ValidationMessage)
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    ParkingBasicDTO model = new ParkingBasicDTO();
+    List<ResultModel> results = new List<ResultModel>();
+    bool isLoading = false;
+
+    private async void Submit()
+    {
+        model.Id = Guid.NewGuid();
+        var modelJson = JsonConvert.SerializeObject(model);
+        results = await _apiService.PostApiData("Parking/Add", modelJson);
+
+        if (results.Any(e => e.IsSuccessStatusCode))
+        {
+            nav.NavigateTo("/Parking/View/" + model.Id);
+        }
+
+        StateHasChanged();
+    }
+
+    private void Validate()
+    {
+        LazyLoad(true);
+        var validationContext = new ValidationContext(model);
+        var validationResults = new List<ValidationResult>();
+
+        if (Validator.TryValidateObject(model, validationContext, validationResults, validateAllProperties: true))
+            Submit();
+        LazyLoad(false);
+    }
+
+    private async Task LazyLoad(bool isDisabled)
+    {
+        // Chame a função JavaScript registrada
+        await JSRuntime.InvokeVoidAsync("lazyLoading", isDisabled);
+        isLoading = isDisabled;
+    }
+}

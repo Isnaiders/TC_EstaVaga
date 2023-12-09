@@ -1,0 +1,105 @@
+﻿@using TCC_Web.Models.DTOs.User;
+
+@{
+	ViewData["Title"] = "Visualizar os Usuários";
+}
+
+@model List<UserDetailedDTO>
+
+<div class="row">
+	<div class="col-md-12">
+		<table id="userTable"
+			   data-toggle="table"
+			   data-pagination="true"
+			   data-search="true"
+			   data-show-columns="true"
+			   data-show-columns-toggle-all="true"
+			   data-show-fullscreen="true"
+			   data-icons-prefix="icon"
+			   data-icons="icons"
+			   data-buttons="buttons">
+			<thead>
+				<tr>
+					<th data-field="Name" data-sortable="true">Nome</th>
+					<th data-field="Type" data-align="center" data-sortable="true">Tipo</th>
+					<th data-field="Email" data-sortable="true">Email</th>
+					<th data-field="Actions" data-align="center">Ações</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var user in Model)
+				{
+					<tr>
+						<td>
+							<div><a href="@Url.Action("View", new { id = user.Id})">@user.Name</a></div>
+							<div><small>@user.Id</small></div>
+						</td>
+						<td>@user.Type.ToString()</td>
+						<td>@user.Email</td>
+						<td>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle"
+										type="button"
+										data-bs-toggle="dropdown"
+										aria-expanded="false">
+									Ações
+								</button>
+								<ul class="dropdown-menu">
+									<li><button class="dropdown-item" type="button" onclick="redirectToUpdate('@user.Id')">Editar</button></li>
+									<li><button class="dropdown-item" type="button" onclick="redirectToRemove('@user.Id')">Remover</button></li>
+								</ul>
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+@section scripts {
+	<script>
+		$(document).ready(function () {
+			if ('@TempData["ErrorMessage"]' != undefined && '@TempData["ErrorMessage"]' != '' && '@TempData["ErrorMessage"]' != null) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: '@TempData["ErrorMessage"]',
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Ok',
+					html: '@TempData["ErrorMessage"]'
+				});
+			}
+		});
+
+		window.icons = {
+			refresh: 'fa-solid fa-rotate-right',
+			columns: 'fa-solid fa-bars',
+			fullscreen: 'fa-solid fa-expand'
+		}
+
+		function buttons() {
+			return {
+				btnUserAdd: {
+					text: 'Adicionar usuário',
+					icon: 'fa-solid fa-user-plus fa-flip-horizontal',
+					event: function () {
+						location.href = '@Url.Action("AuthenticationAdd")';
+					},
+					attributes: {
+						title: 'Adicionar um novo usuário'
+					}
+				}
+			}
+		}
+
+		function redirectToUpdate(id) {
+			location.href = '@Url.Action("AuthenticationUpdate")/' + id;
+		}
+
+		function redirectToRemove(id) {
+			location.href = '@Url.Action("Remove")/' + id;
+		}
+	</script>
+}
