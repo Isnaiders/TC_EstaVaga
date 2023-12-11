@@ -1,0 +1,258 @@
+[
+    {
+        "id": "10b2c2e844f445be",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6eee13a1907120cd",
+        "type": "serial in",
+        "z": "10b2c2e844f445be",
+        "name": "Porta do Uno",
+        "serial": "b398b3f5c79a973e",
+        "x": 270,
+        "y": 400,
+        "wires": [
+            [
+                "6bfab3d1283993d1"
+            ]
+        ]
+    },
+    {
+        "id": "301f10ef86c19bfc",
+        "type": "ui_text",
+        "z": "10b2c2e844f445be",
+        "group": "d24f7e7524e18840",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Reed Switch UNO",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 630,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b450a593003d3dfc",
+        "type": "function",
+        "z": "10b2c2e844f445be",
+        "name": "function 1",
+        "func": "var value=JSON.parse(JSON.stringify(msg.payload));\nvalue=msg;\n\n// Extrai os valores de isBusy e vacancyId do objeto msg.payload\nvar isBusy = msg.payload.isBusy ? 1 : 0;\nvar vacancyId = msg.payload.vacancyId;\n\n// Cria um novo array com os valores extraídos\nmsg.payload = [isBusy, vacancyId];\nmsg.topic = \"UPDATE Vacancy SET Busy = \" + isBusy + \" WHERE VacancyId = '1E2FA6AA-D5D6-47FF-A56F-21550034B364'\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 400,
+        "wires": [
+            [
+                "a1a7417e66585ec3",
+                "301f10ef86c19bfc"
+            ]
+        ]
+    },
+    {
+        "id": "6bfab3d1283993d1",
+        "type": "json",
+        "z": "10b2c2e844f445be",
+        "name": "UNO",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 470,
+        "y": 400,
+        "wires": [
+            [
+                "b450a593003d3dfc"
+            ]
+        ]
+    },
+    {
+        "id": "a1a7417e66585ec3",
+        "type": "MSSQL",
+        "z": "10b2c2e844f445be",
+        "mssqlCN": "8589b19c.e1096",
+        "name": "",
+        "outField": "payload",
+        "returnType": 0,
+        "throwErrors": 1,
+        "query": "",
+        "modeOpt": "queryMode",
+        "modeOptType": "query",
+        "queryOpt": "topic",
+        "queryOptType": "msg",
+        "paramsOpt": "queryParams",
+        "paramsOptType": "none",
+        "rows": "rows",
+        "rowsType": "msg",
+        "parseMustache": true,
+        "params": [],
+        "x": 920,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "99845914ca2ccf01",
+        "type": "serial in",
+        "z": "10b2c2e844f445be",
+        "name": "Porta do Uno Wifi",
+        "serial": "b4ba94b119799b9a",
+        "x": 260,
+        "y": 480,
+        "wires": [
+            [
+                "b51fc53b8e070b10"
+            ]
+        ]
+    },
+    {
+        "id": "77619e8d9865e0d2",
+        "type": "function",
+        "z": "10b2c2e844f445be",
+        "name": "function 2",
+        "func": "var value=JSON.parse(JSON.stringify(msg.payload));\nvalue=msg;\n\n// Extrai os valores de isBusy e vacancyId do objeto msg.payload\nvar isBusy = msg.payload.isBusy ? 1 : 0;\nvar vacancyId = msg.payload.vacancyId;\n\n// Cria um novo array com os valores extraídos\nmsg.payload = [isBusy, vacancyId];\nmsg.topic = \"UPDATE Vacancy SET Busy = \" + isBusy + \" WHERE VacancyId = 'C2790CC5-BBD2-495E-9E4F-038AA227827B'\";\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 480,
+        "wires": [
+            [
+                "a1a7417e66585ec3",
+                "fb89740a32aad9b2"
+            ]
+        ]
+    },
+    {
+        "id": "b51fc53b8e070b10",
+        "type": "json",
+        "z": "10b2c2e844f445be",
+        "name": "UNO WIFI",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 470,
+        "y": 480,
+        "wires": [
+            [
+                "77619e8d9865e0d2"
+            ]
+        ]
+    },
+    {
+        "id": "fb89740a32aad9b2",
+        "type": "ui_text",
+        "z": "10b2c2e844f445be",
+        "group": "d24f7e7524e18840",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Reed Switch UNO WIFI",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 630,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "b398b3f5c79a973e",
+        "type": "serial-port",
+        "name": "Uno ",
+        "serialport": "COM7",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "d24f7e7524e18840",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "cdfd74c7c7aec66b",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8589b19c.e1096",
+        "type": "MSSQL-CN",
+        "tdsVersion": "7_4",
+        "name": "MSSQL",
+        "server": "192.168.18.18",
+        "port": "1433",
+        "encyption": true,
+        "trustServerCertificate": true,
+        "database": "TCC_EstaVaga",
+        "useUTC": true,
+        "connectTimeout": "15000",
+        "requestTimeout": "15000",
+        "cancelTimeout": "5000",
+        "pool": "5",
+        "parseJSON": true,
+        "enableArithAbort": true,
+        "readOnlyIntent": false
+    },
+    {
+        "id": "b4ba94b119799b9a",
+        "type": "serial-port",
+        "name": "Uno Wifi",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "cdfd74c7c7aec66b",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
